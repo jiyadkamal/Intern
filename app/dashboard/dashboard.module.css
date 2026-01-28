@@ -989,14 +989,17 @@
 
 .taskCard {
     padding: var(--space-4);
-    background-color: var(--color-background);
+    background-color: var(--color-surface);
     border-radius: var(--radius-xl);
     transition: all var(--transition-fast);
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
 }
 
 .taskCard:hover {
-    background-color: var(--color-lavender);
+    background-color: var(--color-background-alt);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .taskCardHeader {

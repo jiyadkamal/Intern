@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     title: "InternTrack - Digital Internship Tracker",
     description: "AI-powered internship management platform for students and supervisors",
     keywords: ["internship", "tracker", "student", "supervisor", "AI"],
+    icons: {
+        icon: "/favicon.png",
+    },
 };
 
 export default function RootLayout({
