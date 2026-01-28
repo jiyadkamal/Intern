@@ -1,0 +1,197 @@
+/* Connect Modal Styles */
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow-xl);
+    animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--color-background-alt);
+}
+
+.modalHeader h3 {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.closeBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+}
+
+.closeBtn:hover {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+}
+
+.modalBody {
+    padding: var(--space-6);
+}
+
+.modalDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-5);
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.inputGroup label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+.input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-background-alt);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
+    transition: all var(--transition-fast);
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-accent-mint);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.errorMsg {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    background-color: var(--color-pink);
+    color: #7a3a3a;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+}
+
+.successMsg {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    background-color: var(--color-mint);
+    color: #2d5a4a;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-background-alt);
+}
+
+/* Request Item Styles */
+.requestItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background-color: var(--color-background);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-2);
+}
+
+.requestInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.requestActions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.noConnections {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: var(--space-4);
+    background-color: var(--color-background);
+    border-radius: var(--radius-lg);
+}
+
+/* Pending badge */
+.pendingBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--color-peach);
+    color: #8a5a3a;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.sentBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--color-sky);
+    color: #3a5a7a;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
