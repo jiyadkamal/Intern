@@ -31,13 +31,13 @@ if (getApps().length === 0) {
             projectId: serviceAccount.project_id,
         });
     } else {
-        throw new Error("Firebase Admin could not be initialized: missing credentials.");
+        console.warn("Firebase Admin could not be initialized: missing credentials. Accessing admin services will fail.");
     }
 } else {
     adminApp = getApps()[0];
 }
 
-export const adminAuth = getAuth(adminApp);
-export const adminDb = getFirestore(adminApp);
+export const adminAuth = adminApp! ? getAuth(adminApp) : (null as any);
+export const adminDb = adminApp! ? getFirestore(adminApp) : (null as any);
 
-export default adminApp;
+export default adminApp!;
