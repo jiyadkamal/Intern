@@ -145,13 +145,13 @@ export async function GET(request: NextRequest) {
             .where("requesterId", "==", payload.userId)
             .get();
 
-        const incoming = incomingSnapshot.docs.map(doc => ({
+        const incoming = incomingSnapshot.docs.map((doc: any) => ({
             id: doc.id,
             ...doc.data(),
             direction: "incoming",
         }));
 
-        const outgoing = outgoingSnapshot.docs.map(doc => ({
+        const outgoing = outgoingSnapshot.docs.map((doc: any) => ({
             id: doc.id,
             ...doc.data(),
             direction: "outgoing",

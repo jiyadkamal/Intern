@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
 
         // Get tasks without orderBy to avoid requiring a composite index
         const snapshot = await query.get();
-        const tasks = snapshot.docs.map(doc => ({
+        const tasks = snapshot.docs.map((doc: any) => ({
             id: doc.id,
             ...doc.data()
         })) as Array<{ id: string; createdAt: string } & Record<string, unknown>>;

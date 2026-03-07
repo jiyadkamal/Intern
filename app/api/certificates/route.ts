@@ -157,7 +157,7 @@ export async function GET(request: NextRequest) {
         }
 
         const snapshot = await query.get();
-        const certificates = snapshot.docs.map(doc => {
+        const certificates = snapshot.docs.map((doc: any) => {
             const data = doc.data();
             // Don't include file data in list view to save bandwidth
             const { fileData: _fileData, ...rest } = data;

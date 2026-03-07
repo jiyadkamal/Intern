@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
             }
 
             const snapshot = await query.get();
-            const tasks = snapshot.docs.map(doc => {
+            const tasks = snapshot.docs.map((doc: any) => {
                 const data = doc.data();
                 const docCount = (data.subtasks || []).filter((st: Subtask) => st.documentation?.trim()).length;
                 return {
@@ -170,7 +170,7 @@ Focus on:
 Respond ONLY with the JSON object, no additional text.`;
 
         // Call Gemini API
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
         const response = result.response;
         const text = response.text();
