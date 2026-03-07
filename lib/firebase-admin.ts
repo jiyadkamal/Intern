@@ -17,27 +17,19 @@ if (getApps().length === 0) {
         }
     }
 
-    if (!serviceAccount) {
-        try {
-            serviceAccount = require("@/firebase-service-account.json");
-        } catch (error) {
-            console.error("Firebase service account file not found and env var not set.");
-        }
-    }
-
     if (serviceAccount) {
         adminApp = initializeApp({
             credential: cert(serviceAccount),
             projectId: serviceAccount.project_id,
         });
     } else {
-        console.warn("Firebase Admin could not be initialized: missing credentials. Accessing admin services will fail.");
+        throw new Error("Firebase Admin could not be initialized: FIREBASE_SERVICE_ACCOUNT env var is missing or invalid.");
     }
 } else {
     adminApp = getApps()[0];
 }
 
-export const adminAuth = adminApp! ? getAuth(adminApp) : (null as any);
-export const adminDb = adminApp! ? getFirestore(adminApp) : (null as any);
+export const adminAuth = getAuth(adminApp);
+export const adminDb = getFirestore(adminApp);
 
-export default adminApp!;
+export default adminApp;
