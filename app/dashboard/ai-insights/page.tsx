@@ -78,6 +78,15 @@ function LogOutIcon() {
     );
 }
 
+function CertificateIcon() {
+    return (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="8" r="6" />
+            <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+        </svg>
+    );
+}
+
 function BrainIcon() {
     return (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -293,14 +302,12 @@ export default function AIInsightsPage() {
                     <Link href="/dashboard/student" style={{ textDecoration: "none" }}>
                         <NavItem icon={<HomeIcon />} label="Dashboard" />
                     </Link>
-                    <NavItem icon={<ClipboardIcon />} label="Tasks" />
-                    <NavItem icon={<TrendingUpIcon />} label="Progress" />
-                    <NavItem icon={<UsersIcon />} label="Connections" />
                     <NavItem icon={<SparklesIcon />} label="AI Insights" active />
-                    <NavItem icon={<FileTextIcon />} label="Reports" />
+                    <Link href="/dashboard/student/certificates" style={{ textDecoration: "none" }}>
+                        <NavItem icon={<CertificateIcon />} label="Certificates" />
+                    </Link>
                 </nav>
                 <div className={styles.sidebarFooter}>
-                    <NavItem icon={<SettingsIcon />} label="Settings" />
                     <button onClick={handleLogout} className={styles.navItem}>
                         <LogOutIcon />
                     </button>

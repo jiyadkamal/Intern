@@ -7,13 +7,32 @@ let adminApp: App;
 
 // Initialize Firebase Admin (server-side only)
 if (getApps().length === 0) {
-    // Use service account for server-side operations
-    const serviceAccount = require("@/firebase-service-account.json");
+    let serviceAccount;
 
-    adminApp = initializeApp({
-        credential: cert(serviceAccount),
-        projectId: serviceAccount.project_id,
-    });
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        try {
+            serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        } catch (error) {
+            console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT env var:", error);
+        }
+    }
+
+    if (!serviceAccount) {
+        try {
+            serviceAccount = require("@/firebase-service-account.json");
+        } catch (error) {
+            console.error("Firebase service account file not found and env var not set.");
+        }
+    }
+
+    if (serviceAccount) {
+        adminApp = initializeApp({
+            credential: cert(serviceAccount),
+            projectId: serviceAccount.project_id,
+        });
+    } else {
+        throw new Error("Firebase Admin could not be initialized: missing credentials.");
+    }
 } else {
     adminApp = getApps()[0];
 }

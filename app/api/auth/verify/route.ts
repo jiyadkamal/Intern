@@ -1,5 +1,6 @@
 // Verify Token API Route
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifyToken, extractTokenFromHeader } from "@/lib/auth";
 

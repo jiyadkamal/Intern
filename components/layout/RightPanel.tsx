@@ -28,7 +28,7 @@ const SettingsIcon = () => (
 );
 
 export default function RightPanel({ user, children }: RightPanelProps) {
-    const defaultUser = {
+    const defaultUser: { name: string; role: string; avatar?: string; initials?: string } = {
         name: "Guest User",
         role: "Student",
         initials: "GU",
@@ -50,6 +50,7 @@ export default function RightPanel({ user, children }: RightPanelProps) {
             <div className="right-panel__profile">
                 <div className="right-panel__avatar">
                     {currentUser.avatar ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={currentUser.avatar} alt={currentUser.name} />
                     ) : (
                         currentUser.initials || currentUser.name.charAt(0)

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../login/login.module.css";
@@ -27,7 +27,7 @@ const BriefcaseIcon = () => (
     </svg>
 );
 
-export default function RegisterPage() {
+function RegisterForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const initialRole = searchParams.get("role") || "student";
@@ -254,6 +254,14 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className={styles.authPage} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
+            <RegisterForm />
+        </Suspense>
     );
 }
 

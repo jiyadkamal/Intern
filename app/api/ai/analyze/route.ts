@@ -1,5 +1,6 @@
 // AI Documentation Analysis API Route
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 import { verifyToken, extractTokenFromHeader } from "@/lib/auth";
 import { adminDb } from "@/lib/firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
