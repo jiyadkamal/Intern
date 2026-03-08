@@ -16,38 +16,45 @@ function getAdminApp(): App {
         return adminApp;
     }
 
-    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-    if (!serviceAccountJson) {
-        // Fallback or diagnostic logging
-        const projectId = process.env.FIREBASE_PROJECT_ID;
-        console.error("Firebase Admin Error: Missing FIREBASE_SERVICE_ACCOUNT JSON.", {
-            hasProjectId: !!projectId,
-        });
-        throw new Error(
-            "Firebase Admin: Missing FIREBASE_SERVICE_ACCOUNT environment variable."
-        );
+    if (!projectId || !clientEmail || !privateKey) {
+        console.error('Firebase Admin: Environment variables not found. Checking fallback JSON...');
+
+        // Final fallback to JSON for deployment compatibility
+        const json = process.env.FIREBASE_SERVICE_ACCOUNT;
+        if (json) {
+            try {
+                const decodedJson = json.trim()[0] !== '{'
+                    ? Buffer.from(json, 'base64').toString('utf8')
+                    : json;
+                const config = JSON.parse(decodedJson.trim().replace(/\\n/g, '\n').replace(/^['"](.*)['"]$/, '$1'));
+                adminApp = initializeApp({ credential: cert(config) });
+                console.log('Firebase Admin Initialized (JSON fallback)');
+                return adminApp;
+            } catch (e) {
+                console.error('Firebase Admin: Failed to parse fallback JSON.');
+            }
+        }
+
+        throw new Error('Firebase Admin: Missing environment variables (PROJECT_ID, CLIENT_EMAIL, or PRIVATE_KEY)');
     }
 
-    console.log("Firebase Admin: Initializing with JSON env var.");
-
-    let serviceAccount;
     try {
-        const sanitizedJson = serviceAccountJson
-            .trim()
-            .replace(/\\n/g, '\n')
-            .replace(/^['"](.*)['"]$/, '$1');
-
-        serviceAccount = JSON.parse(sanitizedJson);
+        adminApp = initializeApp({
+            credential: cert({
+                projectId,
+                clientEmail,
+                privateKey: privateKey.replace(/\\n/g, '\n').replace(/^['"](.*)['"]$/, '$1'),
+            }),
+        });
+        console.log('Firebase Admin Initialized');
     } catch (error) {
-        throw new Error(
-            "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
-        );
+        console.error('Firebase Admin Initialization Error:', error);
+        throw error;
     }
-
-    adminApp = initializeApp({
-        credential: cert(serviceAccount),
-    });
 
     return adminApp;
 }
