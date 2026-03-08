@@ -25,11 +25,22 @@ function getAdminApp(): App {
 
     let serviceAccount;
     try {
-        serviceAccount = JSON.parse(serviceAccountJson);
+        // Sanitize the string (handle potential escaped newlines and extra quotes)
+        const sanitizedJson = serviceAccountJson
+            .trim()
+            .replace(/\\n/g, '\n') // Ensure newlines in private key are correct
+            .replace(/^['"](.*)['"]$/, '$1'); // Remove surrounding quotes if any
+
+        serviceAccount = JSON.parse(sanitizedJson);
     } catch (error) {
-        throw new Error(
-            "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
-        );
+        // If first attempt fails, try parsing as-is to be safe
+        try {
+            serviceAccount = JSON.parse(serviceAccountJson);
+        } catch (innerError) {
+            throw new Error(
+                "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
+            );
+        }
     }
 
     adminApp = initializeApp({
