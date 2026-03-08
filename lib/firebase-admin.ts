@@ -16,45 +16,37 @@ function getAdminApp(): App {
         return adminApp;
     }
 
-    // Reconstruct service account from individual env vars if present
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+    if (!serviceAccountJson) {
+        // Fallback or diagnostic logging
+        const projectId = process.env.FIREBASE_PROJECT_ID;
+        console.error("Firebase Admin Error: Missing FIREBASE_SERVICE_ACCOUNT JSON.", {
+            hasProjectId: !!projectId,
+        });
+        throw new Error(
+            "Firebase Admin: Missing FIREBASE_SERVICE_ACCOUNT environment variable."
+        );
+    }
+
+    console.log("Firebase Admin: Initializing with JSON env var.");
 
     let serviceAccount;
+    try {
+        const sanitizedJson = serviceAccountJson
+            .trim()
+            .replace(/\\n/g, '\n')
+            .replace(/^['"](.*)['"]$/, '$1');
 
-    if (projectId && clientEmail && privateKey) {
-        serviceAccount = {
-            projectId,
-            clientEmail,
-            privateKey: privateKey.replace(/\\n/g, '\n').replace(/^['"](.*)['"]$/, '$1'),
-        };
-    } else {
-        // Fallback to legacy JSON format for backward compatibility
-        const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
-        if (!serviceAccountJson) {
-            throw new Error(
-                "Firebase Admin: Missing Firebase credentials (either individual vars or JSON)."
-            );
-        }
-
-        try {
-            const sanitizedJson = serviceAccountJson
-                .trim()
-                .replace(/\\n/g, '\n')
-                .replace(/^['"](.*)['"]$/, '$1');
-
-            serviceAccount = JSON.parse(sanitizedJson);
-        } catch (error) {
-            throw new Error(
-                "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
-            );
-        }
+        serviceAccount = JSON.parse(sanitizedJson);
+    } catch (error) {
+        throw new Error(
+            "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
+        );
     }
 
     adminApp = initializeApp({
         credential: cert(serviceAccount),
-        projectId: serviceAccount.project_id,
     });
 
     return adminApp;
