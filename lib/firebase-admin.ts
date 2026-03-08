@@ -16,27 +16,36 @@ function getAdminApp(): App {
         return adminApp;
     }
 
-    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
-    if (!serviceAccountJson) {
-        throw new Error(
-            "Firebase Admin: FIREBASE_SERVICE_ACCOUNT env var is missing."
-        );
-    }
+    // Reconstruct service account from individual env vars if present
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
     let serviceAccount;
-    try {
-        // Sanitize the string (handle potential escaped newlines and extra quotes)
-        const sanitizedJson = serviceAccountJson
-            .trim()
-            .replace(/\\n/g, '\n') // Ensure newlines in private key are correct
-            .replace(/^['"](.*)['"]$/, '$1'); // Remove surrounding quotes if any
 
-        serviceAccount = JSON.parse(sanitizedJson);
-    } catch (error) {
-        // If first attempt fails, try parsing as-is to be safe
+    if (projectId && clientEmail && privateKey) {
+        serviceAccount = {
+            projectId,
+            clientEmail,
+            privateKey: privateKey.replace(/\\n/g, '\n').replace(/^['"](.*)['"]$/, '$1'),
+        };
+    } else {
+        // Fallback to legacy JSON format for backward compatibility
+        const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+        if (!serviceAccountJson) {
+            throw new Error(
+                "Firebase Admin: Missing Firebase credentials (either individual vars or JSON)."
+            );
+        }
+
         try {
-            serviceAccount = JSON.parse(serviceAccountJson);
-        } catch (innerError) {
+            const sanitizedJson = serviceAccountJson
+                .trim()
+                .replace(/\\n/g, '\n')
+                .replace(/^['"](.*)['"]$/, '$1');
+
+            serviceAccount = JSON.parse(sanitizedJson);
+        } catch (error) {
             throw new Error(
                 "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
             );
