@@ -11,6 +11,7 @@ let _adminDb: Firestore | undefined;
 function getAdminApp(): App {
     if (adminApp) return adminApp;
 
+    console.log("Firebase Admin: Attempting initialization (Ver 3)");
     if (getApps().length > 0) {
         adminApp = getApps()[0];
         return adminApp;
