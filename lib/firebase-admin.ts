@@ -11,7 +11,13 @@ let _adminDb: Firestore | undefined;
 function getAdminApp(): App {
     if (adminApp) return adminApp;
 
-    console.log("Firebase Admin: Attempting initialization (Ver 3)");
+    console.log("Firebase Admin: Attempting initialization (Ver 4)");
+    console.log("ENV CHECK:", {
+        FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID ? "SET" : "MISSING",
+        FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? "SET" : "MISSING",
+        FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? "SET (" + process.env.FIREBASE_PRIVATE_KEY.length + " chars)" : "MISSING",
+        FIREBASE_SERVICE_ACCOUNT: process.env.FIREBASE_SERVICE_ACCOUNT ? "SET" : "MISSING",
+    });
     if (getApps().length > 0) {
         adminApp = getApps()[0];
         return adminApp;
