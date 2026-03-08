@@ -97,10 +97,13 @@ export async function POST(request: NextRequest) {
             },
             { status: 201 }
         );
-    } catch (error) {
-        console.error("Registration error:", error);
+    } catch (error: any) {
+        console.error("Registration error details:", {
+            message: error.message,
+            stack: error.stack
+        });
         return NextResponse.json(
-            { error: "Internal server error" },
+            { error: error.message || "Internal server error" },
             { status: 500 }
         );
     }
