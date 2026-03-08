@@ -1,35 +1,58 @@
 // Firebase Admin SDK Configuration (Server-side only)
+// Uses lazy initialization to avoid build-time crashes
 import { initializeApp, getApps, cert, App } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
+import { getAuth, Auth } from "firebase-admin/auth";
+import { getFirestore, Firestore } from "firebase-admin/firestore";
 
-let adminApp: App;
+let adminApp: App | undefined;
+let _adminAuth: Auth | undefined;
+let _adminDb: Firestore | undefined;
 
-// Initialize Firebase Admin (server-side only)
-if (getApps().length === 0) {
+function getAdminApp(): App {
+    if (adminApp) return adminApp;
+
+    if (getApps().length > 0) {
+        adminApp = getApps()[0];
+        return adminApp;
+    }
+
+    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!serviceAccountJson) {
+        throw new Error(
+            "Firebase Admin: FIREBASE_SERVICE_ACCOUNT env var is missing."
+        );
+    }
+
     let serviceAccount;
-
-    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-        try {
-            serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-        } catch (error) {
-            console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT env var:", error);
-        }
+    try {
+        serviceAccount = JSON.parse(serviceAccountJson);
+    } catch (error) {
+        throw new Error(
+            "Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT env var."
+        );
     }
 
-    if (serviceAccount) {
-        adminApp = initializeApp({
-            credential: cert(serviceAccount),
-            projectId: serviceAccount.project_id,
-        });
-    } else {
-        throw new Error("Firebase Admin could not be initialized: FIREBASE_SERVICE_ACCOUNT env var is missing or invalid.");
-    }
-} else {
-    adminApp = getApps()[0];
+    adminApp = initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.project_id,
+    });
+
+    return adminApp;
 }
 
-export const adminAuth = getAuth(adminApp);
-export const adminDb = getFirestore(adminApp);
+// Lazy getters — only initialize when actually called at runtime
+export const adminAuth: Auth = new Proxy({} as Auth, {
+    get(_, prop) {
+        if (!_adminAuth) _adminAuth = getAuth(getAdminApp());
+        return (_adminAuth as any)[prop];
+    },
+});
 
-export default adminApp;
+export const adminDb: Firestore = new Proxy({} as Firestore, {
+    get(_, prop) {
+        if (!_adminDb) _adminDb = getFirestore(getAdminApp());
+        return (_adminDb as any)[prop];
+    },
+});
+
+export default getAdminApp;
